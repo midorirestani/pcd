@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <unistd.h>
+#include <sys/time.h>
 #define THREADS 4
 #define N 1000000000
 
@@ -18,7 +19,7 @@ void *client_process(void* id){
         }
         //crital section start
         local = sum;
-        sleep(rand()%2);
+        //sleep(rand()%2);
         sum = local + 1;
         printf("Thread %ld accessed %ld times\n", thread_id, sum);
         fflush(stdout);
@@ -46,7 +47,10 @@ int main(void)
     pthread_t server;
     int thid;
     int i;
+    struct timeval init, final;
+    int tmili;
 
+    gettimeofday(&init, NULL);//tempo inicial
     pthread_create(&server, NULL, server_process, NULL);
 
     for(i = 0; i<THREADS; i++){
@@ -55,7 +59,12 @@ int main(void)
     for(i = 0; i<THREADS; i++){
         pthread_join(threads[i], NULL);
     }
+    gettimeofday(&final, NULL);//tempo final
 
+    //calculando o tempo de execução utilizando gettimeofday
+    tmili = (int) (1000*(final.tv_sec - init.tv_sec) + (final.tv_usec - init.tv_usec)/1000);
+
+    printf("tempo decorrido em milissegundos: %d ms\n",tmili );
     printf("sum = %ld\n", sum);
     return 0;
 }
