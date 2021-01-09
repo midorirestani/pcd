@@ -7,6 +7,16 @@
 **  Laboratório 01: Jogo da vida
 **  Versão OpenMP
 */
+
+/*
+** A partir do programa Jogo da Vida já desenvolvido em C/C++ e OpenMP na atividade de programação anterior , 
+** modifique o  procedimento/função (ou trecho de código) que realiza a somatória de todas as posições da 
+** última geração do tabuleiro (soma a quantidade total de células vivas no tabuleiro),
+** criando uma versão desse trecho do código onde não se pode utilizar nenhuma das soluções acima (itens a e b), 
+** ou outro recurso do OpenMP baseado em diretivas e cláusulas para realizar a somatória. 
+** É proibido também utilizar semáforos. Pode-se apenas utilizar recursos usuais de programação da linguagem C/C++.
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -78,7 +88,7 @@ int main(){
   int neighbors;
   for(i=0; i<GENERATIONS; i++){
     result = 0;
-    #pragma omp parallel num_threads(MAX_THREADS) reduction(+:result)
+    #pragma omp parallel num_threads(MAX_THREADS)
     {
       #pragma omp for private(i,j, neighbors)
       for(i = 0; i<N; i++){
@@ -104,11 +114,12 @@ int main(){
   //tempo final
   double end = omp_get_wtime();
 
-  #pragma omp parallel
-  #pragma omp for private (i,j) reduction(+:result)
+  #pragma omp parallel num_threads(MAX_THREADS)
+  #pragma omp for private (i,j)
   for(i = 0; i<N; i++){
     for(j = 0; j<N; j++){
-      if(newgrid[i][j]) result++;
+      if(newgrid[i][j])
+        result++;
     }
   }
 
