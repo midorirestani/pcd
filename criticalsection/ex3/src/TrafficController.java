@@ -1,21 +1,10 @@
 import java.util.concurrent.Semaphore;
 
 public class TrafficController {
-    enum Traffic {
-        RIGHT,
-        LEFT,
-        NONE
-    }
 
     private Semaphore semaphore;
-    private Traffic traffic;
-    private int filaEsq;
-    private int filaDir;
 
     public TrafficController () {
-        traffic = Traffic.NONE;
-        filaEsq = 0;
-        filaDir = 0;
         semaphore = new Semaphore(1);
     }
 
@@ -25,14 +14,13 @@ public class TrafficController {
         } catch (InterruptedException e) {}
     }
 
-    private void onEnter(Traffic direction) {
+    private void onEnter() {
         try {
             Thread wait = new Thread(new Runnable() {
                 public void run() {
-                    while (!semaphore.tryAcquire() && traffic != direction) {
+                    while (!semaphore.tryAcquire()) {
                         nap(25);
                     }
-                    traffic = direction;
                 }
             });
             wait.start();
@@ -44,31 +32,21 @@ public class TrafficController {
 
     public void enterLeft() {
         System.out.println("chegou left");
-        filaEsq++;
-        onEnter(Traffic.LEFT);
+        onEnter();
     }
 
     public void enterRight() {
         System.out.println("chegou right");
-        filaDir++;
-        onEnter(Traffic.RIGHT);
+        onEnter();
     }
 
     public void leaveLeft() {
         System.out.println("saiu left");
-        filaDir--;
-        if (filaDir == 0) {
-            traffic = Traffic.NONE;
-            semaphore.release();
-        }
+        semaphore.release();
     }
 
     public void leaveRight() {
         System.out.println("saiu right");
-        filaEsq--;
-        if (filaEsq == 0) {
-            traffic = Traffic.NONE;
-            semaphore.release();
-        }
+        semaphore.release();
     }
 }
