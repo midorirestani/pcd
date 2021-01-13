@@ -3,17 +3,17 @@
 #include <pthread.h>
 #include <unistd.h>
 #include <sys/time.h>
-#define THREADS 1
+#define THREADS 2
 #define N 1000000000
 
 long count = 0, sum = 0, respond = 0, request =0;
-long iterations = N/THREADS;
+long iterations = N/THREADS, remainder = N%THREADS;
 void *client_process(void* id){
     long thread_id = (long) id;
     long local = 0;
     long i;
 
-    for(i=0; i<iterations; i++){
+    for(i=0; thread_id<THREADS?(i<iterations):(i<iterations+remainder); i++){
         //while(respond!=thread_id){ //wait server response
             request = thread_id;
         //}
