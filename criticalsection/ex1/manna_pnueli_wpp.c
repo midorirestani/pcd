@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <sys/time.h>
 #define THREADS 2
-#define N 101//0000000
+#define N 1000000000
 
 long count = 0, sum = 0, respond = 0, request =0;
 long iterations = N/THREADS, remainder = N%THREADS;
