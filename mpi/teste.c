@@ -4,14 +4,14 @@
 #include <assert.h>
 
 #define SRAND_VALUE 1985
-#define GENERATIONS 2000
-#define N 2028
+#define GENERATIONS 2
+#define N 3
 #define SIZE N *N
 
 long int getRowLocation(long int i, long int neighbor_p)
 {
     i += neighbor_p;
-    printf("i=%d\n", i);
+    //printf("i=%ld\n", i);
     if (i < 0)
         return i + N;
     if (i >= N)
@@ -22,7 +22,7 @@ long int getRowLocation(long int i, long int neighbor_p)
 long int getColumnLocation(long int j, long int neighbor_p)
 {
     j += neighbor_p;
-    //printf("j=%d\n", j);
+    //printf("j=%ld\n", j);
     if (j < 0)
         return j + N;
     if (j >= N)
@@ -32,12 +32,12 @@ long int getColumnLocation(long int j, long int neighbor_p)
 
 long int getNeighbor(long int pcell, long int k, long int l)
 {
-    int neighbor = N * getRowLocation(pcell % N - 1, k) + getColumnLocation(pcell % N, l);
+    long int neighbor = N * getRowLocation(pcell % N - 1, k) + getColumnLocation(pcell % N, l);
     //printf("neighbor = %d\n", neighbor);
     return neighbor;
 }
 
-long int countNeighbors(int *grid, int pcell)
+long int countNeighbors(long int *grid, int pcell)
 {
     long int count = 0;
     for (int k = -1; k < 2; k++)
@@ -51,7 +51,7 @@ long int countNeighbors(int *grid, int pcell)
     return count;
 }
 
-long int *run_game(long int *grid)
+long int run_game(long int *grid)
 {
     int neighbors, i, j, k;
     int new_grid[SIZE];
@@ -65,7 +65,7 @@ long int *run_game(long int *grid)
             if (neighbors < 2 || neighbors > 3) //a célula morre por abandono ou por superpopulação
                 new_grid[j] = 0;
             else if (neighbors == 2) //mantém o estado da célula
-                new_grid[j] = 3;     //grid[j];
+                new_grid[j] = grid[j];
             else if (neighbors == 3) //a célula vive
                 new_grid[j] = 1;
         }
@@ -75,18 +75,19 @@ long int *run_game(long int *grid)
             grid[k] = new_grid[k];
         }
     }
+
     long int count = 0;
     for (i = 0; i < SIZE; i++)
     {
         if (grid[i])
             count++;
     }
-    return grid;
+    return count;
 }
 int main(int argc, char const *argv[])
 {
-    long int *grid = malloc((SIZE) * sizeof(int));
-    long int *new_grid = malloc((SIZE) * sizeof(int));
+    long int *grid = malloc((SIZE) * sizeof(long int));
+    long int result = 0;
     long int i;
 
     printf("N*N = %d\nSIZE = %d\n", N * N, SIZE);
@@ -97,7 +98,9 @@ int main(int argc, char const *argv[])
         grid[i] = rand() % 2;
     }
 
-    new_grid = run_game(grid, 2);
+    result = run_game(grid);
 
+    printf("result = %li", result);
+    free(grid);
     return 0;
 }
