@@ -22,18 +22,26 @@ int getRowLocation(int pcell, int k)
     int row = pcell + N * k;
     if (row < 0)
         return N - 1;
-    if (row > N)
+    else if (row > N)
         return 0;
+    else
+        return row;
 }
 
 int getColumnLocation(int pcell, int l)
 {
-    return 0;
+
+    if (pcell % N == 0 && l < 0)
+        return N - 1;
+    else if (pcell % N == N - 1 && l > 0)
+        return 1 - N;
+    else
+        return l;
 }
+
 int getNeighboor(int grid[N], int pcell, int k, int l)
 {
-    int rlocation = pcell % (N - 1);
-    int clocation = pcell % (N);
+    int neighboor = getRowLocation(pcell, k) + getColumnLocation(pcell, l);
 }
 
 int main(int argc, char const *argv[])
