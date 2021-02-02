@@ -4,8 +4,8 @@
 #include <assert.h>
 
 #define SRAND_VALUE 1985
-#define GENERATIONS 2
-#define N 3
+#define GENERATIONS 2000
+#define N 2048
 #define SIZE N *N
 
 long int getRowLocation(long int i, long int neighbor_p)
@@ -32,7 +32,7 @@ long int getColumnLocation(long int j, long int neighbor_p)
 
 long int getNeighbor(long int pcell, long int k, long int l)
 {
-    long int neighbor = N * getRowLocation(pcell % N - 1, k) + getColumnLocation(pcell % N, l);
+    long int neighbor = N * getRowLocation(pcell % (N - 1), k) + getColumnLocation(pcell % N, l);
     //printf("neighbor = %d\n", neighbor);
     return neighbor;
 }
@@ -40,9 +40,9 @@ long int getNeighbor(long int pcell, long int k, long int l)
 long int countNeighbors(long int *grid, int pcell)
 {
     long int count = 0;
-    for (int k = -1; k < 2; k++)
+    for (long int k = -1; k < 2; k++)
     {
-        for (int l = -1; l < 2; l++)
+        for (long int l = -1; l < 2; l++)
         {
             if (k || l)
                 count += grid[getNeighbor(pcell, k, l)];
@@ -53,10 +53,11 @@ long int countNeighbors(long int *grid, int pcell)
 
 long int run_game(long int *grid)
 {
-    int neighbors, i, j, k;
-    int new_grid[SIZE];
+    long int neighbors, i, j, k;
+    long int *new_grid = malloc(SIZE * sizeof(long int));
     for (i = 0; i < GENERATIONS; i++)
     {
+        printf("generation = %ld\n", i);
         for (j = 0; j < SIZE; j++)
         {
             neighbors = countNeighbors(grid, j);
