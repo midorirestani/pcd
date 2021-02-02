@@ -5,41 +5,41 @@
 
 #define SRAND_VALUE 1985
 #define GENERATIONS 2000
-#define N 3
+#define N 2028
 #define SIZE N *N
 
-int getRowLocation(int pcell, int k)
+long int getRowLocation(long int i, long int neighbor_p)
 {
-    int row = pcell + N * k;
-    if (row < 0)
-        return N - 1;
-    else if (row > N)
-        return 0;
-    else
-        return row;
+    i += neighbor_p;
+    printf("i=%d\n", i);
+    if (i < 0)
+        return i + N;
+    if (i >= N)
+        return i - N;
+    return i;
 }
 
-int getColumnLocation(int pcell, int l)
+long int getColumnLocation(long int j, long int neighbor_p)
 {
-
-    if (pcell % N == 0 && l < 0)
-        return N - 1;
-    else if (pcell % N == N - 1 && l > 0)
-        return 1 - N;
-    else
-        return l;
+    j += neighbor_p;
+    //printf("j=%d\n", j);
+    if (j < 0)
+        return j + N;
+    if (j >= N)
+        return j - N;
+    return j;
 }
 
-int getNeighbor(int pcell, int k, int l)
+long int getNeighbor(long int pcell, long int k, long int l)
 {
-    int neighbor = getRowLocation(pcell, k) + getColumnLocation(pcell, l);
-    printf("neighbor = %d\n", neighbor);
+    int neighbor = N * getRowLocation(pcell % N - 1, k) + getColumnLocation(pcell % N, l);
+    //printf("neighbor = %d\n", neighbor);
     return neighbor;
 }
 
-int countNeighbors(int *grid, int pcell)
+long int countNeighbors(int *grid, int pcell)
 {
-    int count = 0;
+    long int count = 0;
     for (int k = -1; k < 2; k++)
     {
         for (int l = -1; l < 2; l++)
@@ -51,32 +51,43 @@ int countNeighbors(int *grid, int pcell)
     return count;
 }
 
-void run_game(int *grid, int generations)
+long int *run_game(long int *grid)
 {
     int neighbors, i, j, k;
     int new_grid[SIZE];
-    for (i = 0; i < generations; i++)
+    for (i = 0; i < GENERATIONS; i++)
     {
         for (j = 0; j < SIZE; j++)
         {
             neighbors = countNeighbors(grid, j);
+            //printf("neighbors = %d\n", neighbors);
 
             if (neighbors < 2 || neighbors > 3) //a célula morre por abandono ou por superpopulação
                 new_grid[j] = 0;
             else if (neighbors == 2) //mantém o estado da célula
-                new_grid[j] = grid[j];
+                new_grid[j] = 3;     //grid[j];
             else if (neighbors == 3) //a célula vive
                 new_grid[j] = 1;
         }
-        for (k = 0; k < N; k++)
+        for (k = 0; k < SIZE; k++)
+        {
+            //printf("%d ", new_grid[i]);
             grid[k] = new_grid[k];
+        }
     }
+    long int count = 0;
+    for (i = 0; i < SIZE; i++)
+    {
+        if (grid[i])
+            count++;
+    }
+    return grid;
 }
 int main(int argc, char const *argv[])
 {
-    int grid[SIZE];     //= malloc((SIZE) * sizeof(int));
-    int new_grid[SIZE]; //= malloc((SIZE) * sizeof(int));
-    int i;
+    long int *grid = malloc((SIZE) * sizeof(int));
+    long int *new_grid = malloc((SIZE) * sizeof(int));
+    long int i;
 
     printf("N*N = %d\nSIZE = %d\n", N * N, SIZE);
 
@@ -84,22 +95,9 @@ int main(int argc, char const *argv[])
     for (i = 0; i < SIZE; i++)
     {
         grid[i] = rand() % 2;
-        if (i % N == 0 && i != 0)
-        {
-            printf("\n");
-        }
-        printf("%d ", grid[i]);
     }
 
-    run_game(grid, 1);
+    new_grid = run_game(grid, 2);
 
-    for (i = 0; i < SIZE; i++)
-    {
-        if (i % N == 0)
-        {
-            printf("\n");
-        }
-        printf("%d ", grid[i]);
-    }
     return 0;
 }
