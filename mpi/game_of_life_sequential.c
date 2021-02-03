@@ -1,3 +1,12 @@
+/*
+**  Nome: Gabriela Midori Restani R.A:104105
+**  Nome: Júlia Scucuglia R.A:102030
+**  Nome: Klara Sati Kague R.A:
+**  UC:Programação Concorrente e Distribuída
+**  Docente: Profº Dr. Álvaro Fazenda
+**  Laboratório 03: Jogo da vida MPI
+**  Versão Sequencial Utilizando Array
+*/
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
@@ -32,7 +41,7 @@ long int getColumnLocation(long int j, long int neighbor_p)
 
 long int getNeighbor(long int pcell, long int k, long int l)
 {
-    long int neighbor = N * getRowLocation(pcell % (N - 1), k) + getColumnLocation(pcell % N, l);
+    long int neighbor = N * getRowLocation(pcell / N, k) + getColumnLocation(pcell % N, l);
     //printf("neighbor = %d\n", neighbor);
     return neighbor;
 }
