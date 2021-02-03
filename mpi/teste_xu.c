@@ -78,10 +78,16 @@ int main(int argc, char** argv)
 {
     int process_rank, cluster_size;
     int i, j;
+    float tempo_execucao = 0.0;
+    float tempo_inicializacao = 0.0;
+    float aux;
 
     MPI_Init(&argc, &argv);
     MPI_Comm_size(MPI_COMM_WORLD, &cluster_size);
     MPI_Comm_rank(MPI_COMM_WORLD, &process_rank);
+
+    MPI_Barrier(MPI_COMM_WORLD);
+    tempo_inicializacao -= MPI_Wtime();
 
     // Inicializa grid, processo 0 será o root (quem vai guardar o grid durante a inicializacao)
     int *grid = (int*)malloc(N * sizeof(int));
@@ -102,9 +108,13 @@ int main(int argc, char** argv)
         printf("Condicao inicial: %d\n", soma_grid(grid));
     }
 
+
     // Envia o grid inicializado para os outros processos
     MPI_Bcast(grid, N, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Barrier(MPI_COMM_WORLD);
+    aux = MPI_Wtime();
+    tempo_inicializacao += aux;
+    tempo_execucao -= aux;
 
     // Loop de geracoes
     int step = process_rank * chunk;
@@ -143,6 +153,13 @@ int main(int argc, char** argv)
         MPI_Barrier(MPI_COMM_WORLD);
     }
 
+    MPI_Barrier(MPI_COMM_WORLD);
+    tempo_execucao += MPI_Wtime();
+
+    if (process_rank == 0) {
+        printf("Tempo de inicialização: %.2f segundos\n", tempo_inicializacao);
+        printf("Tempo de execução: %.2f segundos\n", tempo_execucao);
+    }
     // limpeza de variáveis
     MPI_Barrier(MPI_COMM_WORLD);
     free(grid);
