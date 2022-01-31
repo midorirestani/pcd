@@ -1,6 +1,6 @@
 # PCD
 
-repositório com os códigos da UC Programaço Concorrente e Distribuída
+repositório com os códigos da UC Programação Concorrente e Distribuída
 
 Atividade 01: Jogo da Vida
 
